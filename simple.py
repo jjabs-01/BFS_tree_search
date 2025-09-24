@@ -44,7 +44,7 @@ class Queue():
     
     def __init__(self):
         self.frontier = []
-        self.checked = []
+        self.checked = set()
 
     def add(self, node):
         self.frontier.append(node)
@@ -58,7 +58,6 @@ class Queue():
     def remove(self):
         if self.frontier:
             x = self.frontier.pop(0)
-            self.checked.append(x.state)
             return x
         else:
             raise ValueError("No Solution")
@@ -78,11 +77,12 @@ def solve(start=list(graph)[0], end=list(graph)[-1]):
         letter = node.state
         if letter == end:
             return node
-        
+    
         for i in graph[letter]:
             addednode = Node(i, node)
-            if addednode not in queue.checked:
-                queue.frontier.append(addednode)
+            if addednode.state not in queue.checked:
+                queue.add(addednode)
+                queue.checked.add(addednode.state)
             
             
 def reconstruct_path(goal_node):
@@ -98,7 +98,9 @@ def reconstruct_path(goal_node):
 
 z = (input("Pick the first State: ")).upper()
 y = (input("Pick the second State: ")).upper()
+
 x = solve(z, y)
+
 
 print(reconstruct_path(x))
 
